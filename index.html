@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport"/>
+<meta content="#0b1020" name="theme-color"/>
+<title>لعبة عبور الطريق</title>
+<link href="manifest.json" rel="manifest"/>
+<link href="assets/icon-192.png" rel="icon"/>
+<link href="style.css" rel="stylesheet"/>
+</head>
+<body>
+<header class="topbar">
+<div class="brand">
+<div aria-hidden="true" class="logo">🐾</div>
+<div>
+<div class="title">لعبة عبور الطريق</div>
+<div class="subtitle">اعبر الطريق… وإذا اصطدمت أنقذ نفسك بسؤال!</div>
+</div>
+</div>
+<div class="top-actions">
+<button class="btn ghost" hidden="" id="installBtn">تثبيت</button>
+<button aria-label="الصوت" class="btn ghost" id="soundBtn">🔊</button>
+</div>
+</header>
+<main class="wrap">
+<section class="card" id="menu">
+<h1>ابدأ اللعب</h1>
+<div class="grid">
+<div class="field">
+<label>الفئة</label>
+<div class="seg">
+<button class="segbtn active" data-mode="primary">الصفوف الأولية</button>
+<button class="segbtn" data-mode="upper">الصفوف العليا</button>
+</div>
+<p class="hint" id="modeHint">جمع وطرح للأعداد من ٠ إلى ١٠ مع تمثيل بصري.</p>
+</div>
+<div class="field">
+<label>المستوى</label>
+<div class="seg">
+<button class="segbtn active" data-diff="easy">مبتدئ</button>
+<button class="segbtn" data-diff="mid">متوسط</button>
+<button class="segbtn" data-diff="pro">محترف</button>
+</div>
+<p class="hint" id="diffHint">مدة السؤال: ٣٠ ثانية · فرص الإنقاذ: ٣</p>
+</div>
+<div class="field">
+<label>الشخصية</label>
+<div class="chars">
+<button class="char active" data-char="rabbit" title="أرنب">🐇</button>
+<button class="char" data-char="chicken" title="دجاجة">🐓</button>
+<button class="char" data-char="goat" title="ماعز">🐐</button>
+<button class="char" data-char="horse" title="حصان">🐎</button>
+</div>
+<p class="hint">تحكم: الأسهم / WASD · على الجوال: اسحب أو استخدم الأزرار.</p>
+</div>
+</div>
+<div class="row">
+<button class="btn primary" id="startBtn">ابدأ</button>
+<button class="btn" id="howBtn">طريقة اللعب</button>
+</div>
+<details class="how" hidden="" id="howPanel">
+<summary>طريقة اللعب</summary>
+<ul>
+<li>تحرك خانة بخانة حتى تعبر المسارات.</li>
+<li>عند الاصطدام: يظهر سؤال (اختيارات).</li>
+<li>إجابة صحيحة = تكمل، وإجابة خاطئة = تبدأ من جديد.</li>
+<li>الأسئلة غير محدودة: كلما اصطدمت يظهر سؤال جديد، والصحيح يكمل والخطأ يبدأ من جديد.</li>
+</ul>
+</details>
+</section>
+<section class="hud" hidden="" id="hud">
+<div class="hud-left">
+<span class="pill">المرحلة: <b id="levelTxt">١</b></span>
+<span class="pill">النقاط: <b id="scoreTxt">٠</b></span>
+</div>
+<div class="hud-right">
+<span class="pill">الوقت: <b id="timeTxt">—</b></span>
+<span class="pill">الفرص: <b id="lifeTxt">♥♥♥</b></span>
+<button class="btn ghost small" id="pauseBtn">إيقاف</button>
+</div>
+</section>
+<section class="gamecard" hidden="" id="gameCard">
+<canvas aria-label="لوحة اللعبة" height="1280" id="game" width="720"></canvas>
+<div aria-hidden="true" class="touch">
+<button class="tbtn" data-move="up">▲</button>
+<div class="trow">
+<button class="tbtn" data-move="left">◀</button>
+<button class="tbtn big" data-move="tap">قفزة</button>
+<button class="tbtn" data-move="right">▶</button>
+</div>
+<button class="tbtn" data-move="down">▼</button>
+</div>
+</section>
+<section class="footer" id="footer">
+<div class="footer-inner">
+<div class="rights">جميع الحقوق محفوظة لـ سلمان الجنيدي</div>
+<div class="icons">
+<a aria-label="واتساب" class="iconlink whatsapp" href="https://wa.me/966566996166" rel="noopener" target="_blank">
+<img alt="" src="assets/whatsapp.svg"/>
+</a>
+<a aria-label="سناب شات" class="iconlink snapchat" href="https://snapchat.com/t/2tVDWcXq" rel="noopener" target="_blank">
+<img alt="" src="assets/snapchat.svg"/>
+</a>
+</div>
+</div>
+</section>
+</main>
+<!-- Question Modal -->
+<div class="modal" hidden="" id="modal">
+<div aria-labelledby="qTitle" aria-modal="true" class="modal-card" role="dialog">
+<div class="modal-head">
+<div>
+<div class="qtitle" id="qTitle">سؤال إنقاذ</div>
+<div class="qmeta">
+<span class="pill small">العداد: <b id="qTimer">—</b></span>
+<span class="pill small">المرحلة: <b id="qLevel">—</b></span>
+</div>
+</div>
+<button aria-label="إغلاق" class="btn ghost small" id="closeModal">✕</button>
+</div>
+<div class="qprompt" id="qPrompt">—</div>
+<div aria-hidden="false" class="qvisual" id="qVisual"></div>
+<div class="qopts" id="qOptions"></div>
+<div class="qfoot">
+<div class="hint" id="qHint">اختر الإجابة الصحيحة قبل انتهاء الوقت.</div>
+</div>
+</div>
+</div>
+<!-- Pause Modal -->
+<div class="modal" hidden="" id="pause">
+<div aria-modal="true" class="modal-card" role="dialog">
+<div class="modal-head">
+<div class="qtitle">إيقاف مؤقت</div>
+<button class="btn primary small" id="resumeBtn">متابعة</button>
+</div>
+<div class="qprompt">اختر ما تريد:</div>
+<div class="row">
+<button class="btn" id="restartBtn">إعادة من البداية</button>
+<button class="btn" id="backMenuBtn">العودة للقائمة</button>
+</div>
+</div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
